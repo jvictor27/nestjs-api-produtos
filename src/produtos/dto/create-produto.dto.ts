@@ -1,5 +1,5 @@
 import { SituacaoProduto } from './../enum/situacao-produto.enum';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsEnum, IsNumber } from 'class-validator';
 
 export class CreateProdutoDto {
     @IsNotEmpty()
@@ -9,8 +9,10 @@ export class CreateProdutoDto {
     descricao: string;
 
     @IsNotEmpty()
+    @IsNumber()
     preco: number;
 
     @IsNotEmpty()
+    @IsEnum(SituacaoProduto)
     situacao: SituacaoProduto;
 }

@@ -1,4 +1,4 @@
-import { Injectable, ParseUUIDPipe } from '@nestjs/common';
+import { Injectable, ParseUUIDPipe, NotFoundException } from '@nestjs/common';
 // import { ProdutoStatus } from './enum/situacao-produto.enum';
 import { Produto } from './produto.model';
 import * as uuid from 'uuid/v1';
@@ -31,7 +31,13 @@ export class ProdutosService {
     }
 
     getProductById(id: string): Produto {
-        return this.produtos.find(produto => produto.id === id);
+        const found =  this.produtos.find(produto => produto.id === id);
+
+        if (!found) {
+            throw new NotFoundException(`Produto com o ID "${id}", não foi encontrado.`);
+        }
+
+        return found;
     }
 
     createProduto(createProdutoDto: CreateProdutoDto): Produto {
@@ -49,8 +55,9 @@ export class ProdutosService {
         return produto;
     }
 
-    deleteProduct(id: string) {
-        this.produtos = this.produtos.filter(produto => produto.id !== id);
+    deleteProduct(id: string): void {
+        const found = this.getProductById(id);
+        this.produtos = this.produtos.filter(produto => produto.id !== found.id);
     }
 
     updateProduto(id: string, updateProdutoDto: UpdateProdutoDto): Produto {

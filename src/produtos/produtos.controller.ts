@@ -10,7 +10,7 @@ export class ProdutosController {
     constructor(private produtosService: ProdutosService) {}
 
     @Get()
-    getProdutos(@Query() filterDto: GetProdutoFilterDto): Produto[] {
+    getProdutos(@Query(ValidationPipe) filterDto: GetProdutoFilterDto): Produto[] {
         if (Object.keys(filterDto).length) {
             return this.produtosService.getProdutosWithFilters(filterDto);
         } else {
@@ -36,6 +36,7 @@ export class ProdutosController {
     }
 
     @Patch('/:id')
+    @UsePipes(ValidationPipe)
     updateProduto(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto): Produto {
         // console.log(updateProdutoDto);
         return this.produtosService.updateProduto(id, updateProdutoDto);
