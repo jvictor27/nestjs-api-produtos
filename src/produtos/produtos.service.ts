@@ -3,6 +3,8 @@ import { Injectable, ParseUUIDPipe } from '@nestjs/common';
 import { Produto } from './produto.model';
 import * as uuid from 'uuid/v1';
 import { CreateProdutoDto } from './dto/create-produto.dto';
+import { GetProdutoFilterDto } from './dto/get-produto-filter.dto';
+import { UpdateProdutoDto } from './dto/update-produto.dto';
 
 @Injectable()
 export class ProdutosService {
@@ -10,6 +12,22 @@ export class ProdutosService {
 
     getAllProdutos(): Produto[] {
         return this.produtos;
+    }
+
+    getProdutosWithFilters(filterDto: GetProdutoFilterDto): Produto[] {
+        const { situacao, nome } = filterDto;
+
+        let produtos = this.getAllProdutos();
+
+        if (situacao && nome) {
+            produtos = produtos.filter(produto => produto.situacao === situacao && produto.nome === nome);
+        } else if (situacao) {
+            produtos = produtos.filter(produto => produto.situacao === situacao);
+        } else if (nome) {
+            produtos = produtos.filter(produto => produto.nome === nome);
+        }
+
+        return produtos;
     }
 
     getProductById(id: string): Produto {
@@ -35,9 +53,9 @@ export class ProdutosService {
         this.produtos = this.produtos.filter(produto => produto.id !== id);
     }
 
-    updateProduto(id: string, createProdutoDto: CreateProdutoDto): Produto {
+    updateProduto(id: string, updateProdutoDto: UpdateProdutoDto): Produto {
         const produto = this.getProductById(id);
-        const { nome, descricao, preco, situacao } = createProdutoDto;
+        const { nome, descricao, preco, situacao } = updateProdutoDto;
         
         if (nome) {
             produto.nome = nome;
