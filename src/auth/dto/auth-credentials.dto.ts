@@ -1,15 +1,24 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsString, MinLength, MaxLength, Matches, IsEmail, IsNumber, Length } from "class-validator";
 
 export class AuthCredentialsDto {
-    @IsNotEmpty()
+
+    @IsString()
+    @MinLength(3)
+    @MaxLength(120)
     nome: string;
 
-    @IsNotEmpty()
+    @IsEmail()
     email: string;
 
-    @IsNotEmpty()
+    @IsNumber()
     cnpj: string;
 
-    @IsNotEmpty()
+    @IsString()
+    @MinLength(6)
+    @MaxLength(20)
+    @Matches(
+        /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+        { message: 'Senha deve ter letra minúscula + letra maiúscula + número ou caracter especial.'},
+    )
     senha: string;
 }

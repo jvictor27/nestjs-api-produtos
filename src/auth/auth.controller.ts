@@ -10,8 +10,7 @@ export class AuthController {
     ) {}
 
     @Post('/singup')
-    @UsePipes(ValidationPipe)
-    async singUp(@Body() authCredentialsDto: AuthCredentialsDto): Promise <void> {
+    async singUp(@Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto): Promise<void> {
         return this.authService.singUp(authCredentialsDto);
     }
 }

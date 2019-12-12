@@ -1,6 +1,8 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, Unique } from "typeorm";
 
 @Entity()
+@Unique(['email'])
+@Unique(['cnpj'])
 export class Usuario extends BaseEntity {
 
     @PrimaryGeneratedColumn()
