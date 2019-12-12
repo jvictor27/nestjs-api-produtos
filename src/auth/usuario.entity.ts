@@ -19,4 +19,7 @@ export class Usuario extends BaseEntity {
 
     @Column()
     senha: string;
+
+    @Column()
+    salt: string;
 }
