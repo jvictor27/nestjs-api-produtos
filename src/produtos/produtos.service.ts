@@ -1,37 +1,24 @@
 import { Injectable, ParseUUIDPipe, NotFoundException } from '@nestjs/common';
-// import { ProdutoStatus } from './enum/situacao-produto.enum';
-import { Produto } from './produto.model';
-import * as uuid from 'uuid/v1';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { GetProdutoFilterDto } from './dto/get-produto-filter.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { ProdutoRepository } from './produto.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Produto } from './produto.entity';
 
 @Injectable()
 export class ProdutosService {
-    private produtos: Produto[] = [];
+    constructor (
+        @InjectRepository(ProdutoRepository)
+        private produtoRepository: ProdutoRepository,
+    ) {}
 
-    getAllProdutos(): Produto[] {
-        return this.produtos;
+    async getProdutos(filterDto: GetProdutoFilterDto): Promise<Produto[]> {
+        return this.produtoRepository.getProdutos(filterDto);
     }
 
-    getProdutosWithFilters(filterDto: GetProdutoFilterDto): Produto[] {
-        const { situacao, nome } = filterDto;
-
-        let produtos = this.getAllProdutos();
-
-        if (situacao && nome) {
-            produtos = produtos.filter(produto => produto.situacao === situacao && produto.nome === nome);
-        } else if (situacao) {
-            produtos = produtos.filter(produto => produto.situacao === situacao);
-        } else if (nome) {
-            produtos = produtos.filter(produto => produto.nome === nome);
-        }
-
-        return produtos;
-    }
-
-    getProductById(id: string): Produto {
-        const found =  this.produtos.find(produto => produto.id === id);
+    async getProductById(id: number): Promise<Produto> {
+        const found = await this.produtoRepository.findOne(id);
 
         if (!found) {
             throw new NotFoundException(`Produto com o ID "${id}", não foi encontrado.`);
@@ -40,28 +27,20 @@ export class ProdutosService {
         return found;
     }
 
-    createProduto(createProdutoDto: CreateProdutoDto): Produto {
-        const { nome, descricao, preco, situacao } = createProdutoDto;
+    async createProduto(createProdutoDto: CreateProdutoDto): Promise<Produto> {
+        return this.produtoRepository.createProduto(createProdutoDto);
+    }
+
+    async deleteProduct(id: number): Promise<void> {
+        const result = await this.produtoRepository.delete(id);
         
-        const produto: Produto = {
-            id: uuid(),
-            nome,
-            descricao,
-            preco,
-            situacao
-        };
-
-        this.produtos.push(produto);
-        return produto;
+        if (result.affected === 0) {
+            throw new NotFoundException(`Produto com o ID "${id}", não foi encontrado.`);
+        }
     }
 
-    deleteProduct(id: string): void {
-        const found = this.getProductById(id);
-        this.produtos = this.produtos.filter(produto => produto.id !== found.id);
-    }
-
-    updateProduto(id: string, updateProdutoDto: UpdateProdutoDto): Produto {
-        const produto = this.getProductById(id);
+    async updateProduto(id: number, updateProdutoDto: UpdateProdutoDto): Promise<Produto> {
+        const produto = await this.getProductById(id);
         const { nome, descricao, preco, situacao } = updateProdutoDto;
         
         if (nome) {
@@ -79,6 +58,8 @@ export class ProdutosService {
         if (situacao) {
             produto.situacao = situacao;
         }
+
+        await produto.save();
 
         return produto;
     }

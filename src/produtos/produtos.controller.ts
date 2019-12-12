@@ -1,45 +1,39 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe, ParseIntPipe } from '@nestjs/common';
 import { ProdutosService } from './produtos.service';
-import { Produto } from './produto.model';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { GetProdutoFilterDto } from './dto/get-produto-filter.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { Produto } from './produto.entity';
 
 @Controller('produtos')
 export class ProdutosController {
     constructor(private produtosService: ProdutosService) {}
 
     @Get()
-    getProdutos(@Query(ValidationPipe) filterDto: GetProdutoFilterDto): Produto[] {
-        if (Object.keys(filterDto).length) {
-            return this.produtosService.getProdutosWithFilters(filterDto);
-        } else {
-            return this.produtosService.getAllProdutos();
-        }
+    getProdutos(@Query(ValidationPipe) filterDto: GetProdutoFilterDto): Promise<Produto[]> {
+        return this.produtosService.getProdutos(filterDto);
     }
 
     @Get('/:id')
-    getProdutoById(@Param('id') id: string): Produto {
+    getProdutoById(@Param('id', ParseIntPipe) id: number): Promise<Produto> {
         return this.produtosService.getProductById(id);
     }
 
     @Post()
     @UsePipes(ValidationPipe)
-    createProduto(@Body() createProdutoDto: CreateProdutoDto): Produto {
-        // console.log('body ', body);
+    createProduto(@Body() createProdutoDto: CreateProdutoDto): Promise<Produto> {
         return this.produtosService.createProduto(createProdutoDto);
     }
 
     @Delete('/:id')
-    deleteProduto(@Param('id') id: string): void {
-        this.produtosService.deleteProduct(id);
+    deleteProduto(@Param('id', ParseIntPipe) id: number): Promise<void> {
+        return this.produtosService.deleteProduct(id);
     }
 
     @Patch('/:id')
     @UsePipes(ValidationPipe)
-    updateProduto(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto): Produto {
-        // console.log(updateProdutoDto);
+    updateProduto(@Param('id', ParseIntPipe) id: number, @Body() updateProdutoDto: UpdateProdutoDto): Promise<Produto> {
         return this.produtosService.updateProduto(id, updateProdutoDto);
     }
-    
+
 }

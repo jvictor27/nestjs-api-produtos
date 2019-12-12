@@ -7,10 +7,10 @@ import { ProdutoRepository } from './produto.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      ProdutoRepository
-    ])
-  ]
+      ProdutoRepository,
+    ]),
+  ],
   controllers: [ProdutosController],
-  providers: [ProdutosService]
+  providers: [ProdutosService],
 })
 export class ProdutosModule {}
