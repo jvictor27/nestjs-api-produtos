@@ -3,26 +3,31 @@ import { UsuarioRepository } from './usuario.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SingUpUsuarioDto } from './dto/singup-usuario.dto';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
     
     constructor(
         @InjectRepository(UsuarioRepository)
-        private usuarioRepository: UsuarioRepository
+        private usuarioRepository: UsuarioRepository,
+        private jwtService: JwtService,
     ) {}
 
     async singUp(singUpUsuarioDto: SingUpUsuarioDto): Promise<void> {
         return this.usuarioRepository.singUp(singUpUsuarioDto);
     }
 
-    async singIn(authCredentialsDto: AuthCredentialsDto): Promise<string> {
-        const result = await this.usuarioRepository.validateUsuarioSenha(authCredentialsDto);
+    async singIn(authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string }> {
+        const usuario = await this.usuarioRepository.validateUsuarioSenha(authCredentialsDto);
 
-        if (!result) {
+        if (!usuario) {
             throw new UnauthorizedException('Login ou senha errado(s)');
         }
 
-        return result;
+        const payload: JwtPayload = { nome: usuario.nome };
+        const accessToken = await this.jwtService.sign(payload);
+        return { accessToken };
     }
 }

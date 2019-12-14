@@ -30,7 +30,7 @@ export class UsuarioRepository extends Repository<Usuario> {
         }
     }
 
-    async validateUsuarioSenha(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+    async validateUsuarioSenha(authCredentialsDto: AuthCredentialsDto): Promise<Usuario> {
         const { login, senha } = authCredentialsDto;
 
         const query = this.createQueryBuilder('usuario');
@@ -49,7 +49,7 @@ export class UsuarioRepository extends Repository<Usuario> {
             return null;
         }
 
-        return usuario.nome;
+        return usuario;
     }
 
     private async hashSenha(senha: string, salt: string): Promise<string> {
