@@ -1,13 +1,14 @@
 import { Repository, EntityRepository } from "typeorm";
 import { Usuario } from "./usuario.entity";
-import { AuthCredentialsDto } from "./dto/auth-credentials.dto";
+import { SingUpUsuarioDto } from "./dto/singup-usuario.dto";
 import { ConflictException, InternalServerErrorException } from "@nestjs/common";
 import * as bcrypt from 'bcrypt';
+import { AuthCredentialsDto } from "./dto/auth-credentials.dto";
 
 @EntityRepository(Usuario)
 export class UsuarioRepository extends Repository<Usuario> {
-    async singUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-        const { nome, cnpj, email, senha } = authCredentialsDto;
+    async singUp(singUpUsuarioDto: SingUpUsuarioDto): Promise<void> {
+        const { nome, cnpj, email, senha } = singUpUsuarioDto;
 
         const salt = await bcrypt.genSalt();
 
@@ -27,6 +28,28 @@ export class UsuarioRepository extends Repository<Usuario> {
                 throw new InternalServerErrorException();
             }
         }
+    }
+
+    async validateUsuarioSenha(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+        const { login, senha } = authCredentialsDto;
+
+        const query = this.createQueryBuilder('usuario');
+        query.andWhere('usuario.email = :login OR usuario.cnpj = :login', { login });
+
+        const result = await query.getMany();
+        
+        if (result.length === 0) {
+            return null;
+        }
+
+        const usuario = result.shift();
+        const isValidate = await usuario.ValidateSenha(senha); 
+        // console.log(usuario.ValidateSenha(senha));
+        if (!isValidate) {
+            return null;
+        }
+
+        return usuario.nome;
     }
 
     private async hashSenha(senha: string, salt: string): Promise<string> {
