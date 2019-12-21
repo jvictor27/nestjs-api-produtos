@@ -1,5 +1,6 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { SituacaoProduto } from "./enum/situacao-produto.enum";
+import { Usuario } from "src/auth/usuario.entity";
 
 @Entity()
 export class Produto extends BaseEntity {
@@ -18,4 +19,7 @@ export class Produto extends BaseEntity {
 
     @Column()
     situacao: SituacaoProduto;
+
+    @ManyToOne(type => Usuario, usuario => usuario.produtos, { eager: false })
+    usuario: Usuario;
 }
