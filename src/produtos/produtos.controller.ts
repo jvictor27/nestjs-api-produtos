@@ -14,8 +14,8 @@ export class ProdutosController {
     constructor(private produtosService: ProdutosService) {}
 
     @Get()
-    getProdutos(@Query(ValidationPipe) filterDto: GetProdutoFilterDto): Promise<Produto[]> {
-        return this.produtosService.getProdutos(filterDto);
+    getProdutos(@Query(ValidationPipe) filterDto: GetProdutoFilterDto, @GetUsuario() usuario: Usuario): Promise<Produto[]> {
+        return this.produtosService.getProdutos(filterDto, usuario);
     }
 
     @Get('/:id')

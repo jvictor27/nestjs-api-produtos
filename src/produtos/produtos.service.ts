@@ -14,8 +14,8 @@ export class ProdutosService {
         private produtoRepository: ProdutoRepository,
     ) {}
 
-    async getProdutos(filterDto: GetProdutoFilterDto): Promise<Produto[]> {
-        return this.produtoRepository.getProdutos(filterDto);
+    async getProdutos(filterDto: GetProdutoFilterDto, usuario: Usuario): Promise<Produto[]> {
+        return this.produtoRepository.getProdutos(filterDto, usuario);
     }
 
     async getProductById(id: number): Promise<Produto> {

@@ -7,9 +7,11 @@ import { Usuario } from 'src/auth/usuario.entity';
 @EntityRepository(Produto)
 export class ProdutoRepository extends Repository<Produto> {
 
-    async getProdutos(filterDto: GetProdutoFilterDto): Promise<Produto[]> {
+    async getProdutos(filterDto: GetProdutoFilterDto, usuario: Usuario): Promise<Produto[]> {
         const { situacao, nome } = filterDto;
         const query = this.createQueryBuilder('produto');
+
+        query.where('produto.usuario_id = :usuario_id', { usuario_id: usuario.id });
 
         if (situacao) {
             query.andWhere('produto.situacao = :situacao', { situacao });

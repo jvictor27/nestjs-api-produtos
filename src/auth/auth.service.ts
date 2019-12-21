@@ -26,7 +26,7 @@ export class AuthService {
             throw new UnauthorizedException('Login ou senha errado(s)');
         }
 
-        const payload: JwtPayload = { nome: usuario.nome };
+        const payload: JwtPayload = { email: usuario.email };
         const accessToken = await this.jwtService.sign(payload);
         return { accessToken };
     }
