@@ -5,6 +5,7 @@ import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { ProdutoRepository } from './produto.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Produto } from './produto.entity';
+import { Usuario } from 'src/auth/usuario.entity';
 
 @Injectable()
 export class ProdutosService {
@@ -27,8 +28,8 @@ export class ProdutosService {
         return found;
     }
 
-    async createProduto(createProdutoDto: CreateProdutoDto): Promise<Produto> {
-        return this.produtoRepository.createProduto(createProdutoDto);
+    async createProduto(createProdutoDto: CreateProdutoDto, usuario: Usuario): Promise<Produto> {
+        return this.produtoRepository.createProduto(createProdutoDto, usuario);
     }
 
     async deleteProduct(id: number): Promise<void> {

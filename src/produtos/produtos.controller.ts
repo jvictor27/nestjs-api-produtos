@@ -5,6 +5,8 @@ import { GetProdutoFilterDto } from './dto/get-produto-filter.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Produto } from './produto.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { Usuario } from 'src/auth/usuario.entity';
+import { GetUsuario } from 'src/auth/get-usuario.decorator';
 
 @Controller('produtos')
 @UseGuards(AuthGuard())
@@ -23,8 +25,8 @@ export class ProdutosController {
 
     @Post()
     @UsePipes(ValidationPipe)
-    createProduto(@Body() createProdutoDto: CreateProdutoDto): Promise<Produto> {
-        return this.produtosService.createProduto(createProdutoDto);
+    createProduto(@Body() createProdutoDto: CreateProdutoDto, @GetUsuario() usuario: Usuario): Promise<Produto> {
+        return this.produtosService.createProduto(createProdutoDto, usuario);
     }
 
     @Delete('/:id')

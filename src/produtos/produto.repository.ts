@@ -2,6 +2,7 @@ import { Repository, EntityRepository } from 'typeorm';
 import { Produto } from './produto.entity';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { GetProdutoFilterDto } from './dto/get-produto-filter.dto';
+import { Usuario } from 'src/auth/usuario.entity';
 
 @EntityRepository(Produto)
 export class ProdutoRepository extends Repository<Produto> {
@@ -22,7 +23,7 @@ export class ProdutoRepository extends Repository<Produto> {
         return produtos;
     }
 
-    async createProduto(createProdutoDto: CreateProdutoDto) : Promise<Produto> {
+    async createProduto(createProdutoDto: CreateProdutoDto, usuario: Usuario) : Promise<Produto> {
         const { nome, descricao, preco, situacao } = createProdutoDto;
         const produto = new Produto();
 
@@ -30,7 +31,9 @@ export class ProdutoRepository extends Repository<Produto> {
         produto.descricao = descricao;
         produto.preco = preco;
         produto.situacao = situacao;
+        produto.usuario = usuario;
         await produto.save();
+        delete produto.usuario;
 
         return produto;
     }
