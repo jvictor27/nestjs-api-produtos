@@ -18,12 +18,24 @@ export class ProdutosService {
         return this.produtoRepository.getProdutos(filterDto, usuario);
     }
 
-    async getProductById(id: number): Promise<Produto> {
-        const found = await this.produtoRepository.findOne(id);
+    async getProductById(id: number, usuario: Usuario): Promise<Produto> {
+        // const found = await this.produtoRepository.findOne({ where: { id, usuario_id: usuario.id } });
 
-        if (!found) {
+        // if (!found) {
+        //     throw new NotFoundException(`Produto com o ID "${id}", não foi encontrado.`);
+        // }
+
+        const query = this.produtoRepository.createQueryBuilder('produto');
+        query.andWhere('produto.id = :id ', { id });
+        query.andWhere('produto.usuario_id = :usuario_id ', { usuario_id: usuario.id });
+
+        const result = await query.getMany();
+        
+        if (result.length === 0) {
             throw new NotFoundException(`Produto com o ID "${id}", não foi encontrado.`);
         }
+
+        const found = result.shift();
 
         return found;
     }
@@ -32,7 +44,8 @@ export class ProdutosService {
         return this.produtoRepository.createProduto(createProdutoDto, usuario);
     }
 
-    async deleteProduct(id: number): Promise<void> {
+    async deleteProduct(id: number, usuario: Usuario): Promise<void> {
+        const produto = await this.getProductById(id, usuario);
         const result = await this.produtoRepository.delete(id);
         
         if (result.affected === 0) {
@@ -40,8 +53,8 @@ export class ProdutosService {
         }
     }
 
-    async updateProduto(id: number, updateProdutoDto: UpdateProdutoDto): Promise<Produto> {
-        const produto = await this.getProductById(id);
+    async updateProduto(id: number, updateProdutoDto: UpdateProdutoDto, usuario: Usuario): Promise<Produto> {
+        const produto = await this.getProductById(id, usuario);
         const { nome, descricao, preco, situacao } = updateProdutoDto;
         
         if (nome) {

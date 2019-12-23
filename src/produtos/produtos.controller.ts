@@ -19,8 +19,8 @@ export class ProdutosController {
     }
 
     @Get('/:id')
-    getProdutoById(@Param('id', ParseIntPipe) id: number): Promise<Produto> {
-        return this.produtosService.getProductById(id);
+    getProdutoById(@Param('id', ParseIntPipe) id: number, @GetUsuario() usuario: Usuario): Promise<Produto> {
+        return this.produtosService.getProductById(id, usuario);
     }
 
     @Post()
@@ -30,14 +30,14 @@ export class ProdutosController {
     }
 
     @Delete('/:id')
-    deleteProduto(@Param('id', ParseIntPipe) id: number): Promise<void> {
-        return this.produtosService.deleteProduct(id);
+    deleteProduto(@Param('id', ParseIntPipe) id: number, @GetUsuario() usuario: Usuario): Promise<void> {
+        return this.produtosService.deleteProduct(id, usuario);
     }
 
     @Patch('/:id')
     @UsePipes(ValidationPipe)
-    updateProduto(@Param('id', ParseIntPipe) id: number, @Body() updateProdutoDto: UpdateProdutoDto): Promise<Produto> {
-        return this.produtosService.updateProduto(id, updateProdutoDto);
+    updateProduto(@Param('id', ParseIntPipe) id: number, @Body() updateProdutoDto: UpdateProdutoDto, @GetUsuario() usuario: Usuario): Promise<Produto> {
+        return this.produtosService.updateProduto(id, updateProdutoDto, usuario);
     }
 
 }
