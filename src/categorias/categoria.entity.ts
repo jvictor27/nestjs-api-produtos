@@ -12,6 +12,9 @@ export class Categoria extends BaseEntity {
     @Column()
     descricao: string;
 
+    @Column({name: "categoria_pai_id", nullable: true})
+    categoriaPaiId: number;
+
     @ManyToOne(type => Categoria)
     @JoinColumn({name: "categoria_pai_id"})
     categoriaPai: Categoria;

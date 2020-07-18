@@ -15,4 +15,7 @@ export class CreateProdutoDto {
     @IsNotEmpty()
     @IsEnum(SituacaoProduto)
     situacao: SituacaoProduto;
+
+    @IsNumber()
+    categoriaId: number;
 }

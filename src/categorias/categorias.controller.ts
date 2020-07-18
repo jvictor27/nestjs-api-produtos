@@ -15,13 +15,24 @@ export class CategoriasController {
     constructor(private categoriasService: CategoriasService) {}
 
     @Get()
-    getCategorias(@Query(ValidationPipe) filterDto: GetCategoriaFilterDto): Promise<Categoria[]> {
+    getCategorias(@Query(ValidationPipe) filterDto: GetCategoriaFilterDto): Promise<GetCategoriaDto[]> {
         return this.categoriasService.getCategorias(filterDto);
     }
+
+    @Get('/arvore')
+    getCategoriasArvore(): Promise<GetCategoriaDto[]> {
+        return this.categoriasService.getCategoriasArvore();
+    }
+    
 
     @Get('/:id')
     getCategoriaById(@Param('id', ParseIntPipe) id: number): Promise<Categoria> {
         return this.categoriasService.getCategoriaById(id);
+    }
+
+    @Get('/:id/filhas')
+    getByCategoriaPaiId(@Param('id', ParseIntPipe) id: number): Promise<Categoria[]> {
+        return this.categoriasService.getByCategoriaPaiId(id);
     }
 
     // @Post()

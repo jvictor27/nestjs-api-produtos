@@ -3,6 +3,7 @@ import { Produto } from './produto.entity';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { GetProdutoFilterDto } from './dto/get-produto-filter.dto';
 import { Usuario } from 'src/auth/usuario.entity';
+import { Categoria } from '../categorias/categoria.entity';
 
 @EntityRepository(Produto)
 export class ProdutoRepository extends Repository<Produto> {
@@ -25,8 +26,8 @@ export class ProdutoRepository extends Repository<Produto> {
         return produtos;
     }
 
-    async createProduto(createProdutoDto: CreateProdutoDto, usuario: Usuario) : Promise<Produto> {
-        const { nome, descricao, preco, situacao } = createProdutoDto;
+    async createProduto(createProdutoDto: CreateProdutoDto, usuario: Usuario, categoria: Categoria) : Promise<Produto> {
+        const { nome, descricao, preco, situacao, categoriaId } = createProdutoDto;
         const produto = new Produto();
 
         produto.nome = nome;
@@ -34,6 +35,7 @@ export class ProdutoRepository extends Repository<Produto> {
         produto.preco = preco;
         produto.situacao = situacao;
         produto.usuario = usuario;
+        produto.categorias = [categoria];
         await produto.save();
         delete produto.usuario;
 

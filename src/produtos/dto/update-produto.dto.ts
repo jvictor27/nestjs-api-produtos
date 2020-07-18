@@ -19,4 +19,8 @@ export class UpdateProdutoDto {
     @IsNotEmpty()
     @IsEnum(SituacaoProduto)
     situacao: SituacaoProduto;
+
+    @IsOptional()
+    @IsNumber()
+    categoriaId: number;
 }

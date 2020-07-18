@@ -35,16 +35,17 @@ export class CategoriaRepository extends Repository<Categoria> {
         categoria.categoriaPai = null;
 
         if (categoriaPai) {
-            const query = this.createQueryBuilder('categoria');
-            query.andWhere('categoria.id = :id ', { id: categoriaPai });
+            // const query = this.createQueryBuilder('categoria');
+            // query.andWhere('categoria.id = :id ', { id: categoriaPai });
 
-            const result = await query.getMany();
+            // const result = await query.getMany();
             
-            if (result.length === 0) {
-                throw new NotFoundException(`CategoriaPai com o ID "${categoriaPai}", não foi encontrado.`);
-            }
+            // if (result.length === 0) {
+            //     throw new NotFoundException(`CategoriaPai com o ID "${categoriaPai}", não foi encontrado.`);
+            // }
 
-            const found = result.shift();
+            // const found = result.shift();
+            const found = await this.getCategoriaById(categoriaPai);
             categoria.categoriaPai = found;
         }
 
@@ -66,7 +67,23 @@ export class CategoriaRepository extends Repository<Categoria> {
         }
 
         const categoria = result.shift();
+        console.log(categoria);
 
         return categoria;
+    }
+
+    async getByCategoriaPaiId(id: number): Promise<Categoria[]> {
+        const query = this.createQueryBuilder('categoria');
+        query.andWhere('categoria.categoria_pai_id = :id ', { id });
+
+        const result = await query.getMany();
+        
+        // if (result.length === 0) {
+        //     throw new NotFoundException(`Categorias com o categoria pai ID "${id}", não foram encontradas.`);
+        // }
+
+        const categorias = result;
+
+        return categorias;
     }
 }

@@ -2,6 +2,10 @@ import { IsNotEmpty, IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { isEmptyStatement } from '@babel/types';
 
 export class GetCategoriaDto {
+    
+    @IsNotEmpty()
+    id: number;
+
     @IsNotEmpty()
     nome: string;
 
@@ -10,5 +14,11 @@ export class GetCategoriaDto {
 
     @IsOptional()
     @IsNumber()
-    categoriaPai: number;
+    categoriaPaiId: number;
+
+    @IsOptional()
+    categoriaPath: string;
+
+    @IsOptional()
+    categoriaArvore: GetCategoriaDto[];
 }
