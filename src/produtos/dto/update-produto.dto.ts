@@ -23,4 +23,8 @@ export class UpdateProdutoDto {
     @IsOptional()
     @IsNumber()
     categoriaId: number;
+
+    @IsOptional()
+    @IsNumber()
+    quantidade: number;
 }

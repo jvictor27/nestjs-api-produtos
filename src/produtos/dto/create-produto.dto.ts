@@ -1,5 +1,6 @@
 import { SituacaoProduto } from './../enum/situacao-produto.enum';
-import { IsNotEmpty, IsEnum, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { CreateVariacaoDto } from 'src/variacoes/dto/create-variacao.dto';
 
 export class CreateProdutoDto {
     @IsNotEmpty()
@@ -18,4 +19,7 @@ export class CreateProdutoDto {
 
     @IsNumber()
     categoriaId: number;
+
+    @IsOptional()
+    variacoes: CreateVariacaoDto[];
 }

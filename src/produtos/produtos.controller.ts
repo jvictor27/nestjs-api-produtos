@@ -7,6 +7,9 @@ import { Produto } from './produto.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { Usuario } from 'src/auth/usuario.entity';
 import { GetUsuario } from 'src/auth/get-usuario.decorator';
+import { Variacao } from 'src/variacoes/variacao.entity';
+import { GetVariacaoDto } from 'src/variacoes/dto/get-variacao.dto';
+import { GetProdutoDto } from './dto/get-produto.dto';
 
 @Controller('produtos')
 @UseGuards(AuthGuard())
@@ -14,13 +17,13 @@ export class ProdutosController {
     constructor(private produtosService: ProdutosService) {}
 
     @Get()
-    getProdutos(@Query(ValidationPipe) filterDto: GetProdutoFilterDto, @GetUsuario() usuario: Usuario): Promise<Produto[]> {
-        return this.produtosService.getProdutos(filterDto, usuario);
+    getProdutos(@Query(ValidationPipe) filterDto: GetProdutoFilterDto, @GetUsuario() usuario: Usuario): Promise<GetProdutoDto[]> {
+        return this.produtosService.getProdutosDto(filterDto, usuario);
     }
 
     @Get('/:id')
-    getProdutoById(@Param('id', ParseIntPipe) id: number, @GetUsuario() usuario: Usuario): Promise<Produto> {
-        return this.produtosService.getProductById(id, usuario);
+    getProdutoById(@Param('id', ParseIntPipe) id: number, @GetUsuario() usuario: Usuario): Promise<GetProdutoDto> {
+        return this.produtosService.getProdutoDtoById(id, usuario);
     }
 
     @Post()
@@ -38,6 +41,11 @@ export class ProdutosController {
     @UsePipes(ValidationPipe)
     updateProduto(@Param('id', ParseIntPipe) id: number, @Body() updateProdutoDto: UpdateProdutoDto, @GetUsuario() usuario: Usuario): Promise<Produto> {
         return this.produtosService.updateProduto(id, updateProdutoDto, usuario);
+    }
+
+    @Get('/:id/variacoes')
+    getProdutoVariacoesDtoByProdutoId(@Param('id', ParseIntPipe) id: number): Promise<GetVariacaoDto[]> {
+        return this.produtosService.getProdutoVariacoesDtoByProdutoId(id);
     }
 
 }

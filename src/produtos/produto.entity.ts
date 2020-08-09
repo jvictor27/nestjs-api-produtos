@@ -1,13 +1,17 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, JoinTable, ManyToMany } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import { SituacaoProduto } from "./enum/situacao-produto.enum";
 import { Usuario } from "src/auth/usuario.entity";
 import { Categoria } from "src/categorias/categoria.entity";
+import { Variacao } from "src/variacoes/variacao.entity";
 
 @Entity()
 export class Produto extends BaseEntity {
     
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column()
+    sku: string;
 
     @Column()
     nome: string;
@@ -21,6 +25,9 @@ export class Produto extends BaseEntity {
     @Column()
     situacao: SituacaoProduto;
 
+    @Column()
+    quantidade: number;
+
     @ManyToOne(type => Usuario, usuario => usuario.produtos, { eager: false })
     @JoinColumn({name: "usuario_id"})
     usuario: Usuario;
@@ -28,6 +35,9 @@ export class Produto extends BaseEntity {
     @ManyToMany(type => Categoria)
     @JoinTable({name: "categoria_produto"})
     categorias: Categoria[];
+
+    @OneToMany(type => Variacao, variacao => variacao.produto)
+    variacoes: Variacao[];
 
     // usuarioId: number;
 }

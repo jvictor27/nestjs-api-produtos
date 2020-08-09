@@ -55,8 +55,6 @@ export class CategoriasService {
         const categoriaCreated = await this.categoriaRepository.createCategoria(createCategoriaDto);
         const categoria = new GetCategoriaDto();
 
-        // console.log(categoriaCreated.nome);
-
         categoria.nome = categoriaCreated.nome;
         categoria.descricao = categoriaCreated.descricao;
         if (categoriaCreated.categoriaPai) {
